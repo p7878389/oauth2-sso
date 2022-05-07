@@ -1,0 +1,26 @@
+server:
+  servlet:
+    context-path: /auth
+    session:
+      cookie:
+        name: SSO-JSESSIONID
+logging:
+  level:
+    root: debug
+
+sso:
+  jwt:
+    signingKey: shareworks
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sso
+    username: root
+    password: BhkboKVMO7p5
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis-plus:
+  mapper-locations: com/shareworks/auth/server/mapper/**.xml
+  type-enums-package: com.shareworks.auth.server.enums
+  configuration:
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler

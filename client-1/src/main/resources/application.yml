@@ -1,0 +1,33 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /ui
+    register-default-servlet: true
+    session:
+      cookie:
+        name: CLIENT1-JSESSIONID
+
+auth-server:
+  address: http://localhost:8080/auth
+
+security:
+#  basic:
+#    enabled: false
+  oauth2:
+    client:
+      client-id: client
+      client-secret: secret
+      access-token-uri: ${auth-server.address}/oauth/token
+      user-authorization-uri: ${auth-server.address}/oauth/authorize
+    resource:
+      user-info-uri: ${auth-server.address}/getUserInfo
+spring:
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    encoding: UTF-8 #编码
+    suffix: .html #模板后缀
+    mode: HTML #模板
+logging:
+  level:
+    root: debug
