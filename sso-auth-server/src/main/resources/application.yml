@@ -9,6 +9,7 @@ logging:
     root: debug
 
 sso:
+  frontEndDomain: http://localhost:8080/auth
   jwt:
     signingKey: shareworks
 

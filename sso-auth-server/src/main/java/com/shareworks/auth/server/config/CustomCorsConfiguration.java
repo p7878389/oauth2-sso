@@ -8,6 +8,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
+
 /**
  * @author martin.peng
  */
@@ -22,6 +24,8 @@ public class CustomCorsConfiguration {
         corsConfiguration.addAllowedOrigin("*");
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
+
+        corsConfiguration.setAllowedHeaders(Arrays.asList("x-requested-with", "authorization"));
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/oauth/**", corsConfiguration);
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/captcha/**", corsConfiguration);

@@ -5,7 +5,7 @@ server:
     register-default-servlet: true
     session:
       cookie:
-        name: CLIENT1-JSESSIONID
+        name: OAUTH2CLIENTSESSION
 
 auth-server:
   address: http://localhost:8080/auth

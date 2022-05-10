@@ -22,4 +22,7 @@ public enum GlobalErrorCodeEnums {
     public <T> ResponseDTO<T> convert() {
         return new ResponseDTO<T>(getCode(), getMessage(), null);
     }
+    public <T> ResponseDTO<T> convert(T t) {
+        return new ResponseDTO<T>(getCode(), getMessage(), t);
+    }
 }
