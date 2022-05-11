@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,11 +15,13 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import java.util.Arrays;
 
@@ -35,6 +38,8 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     private final AuthenticationManager authenticationManager;
     private final SsoProperties ssoProperties;
     private final UserDetailsService customUserDetailsServiceImpl;
+    private final AuthorizationCodeServices customAuthorizationCodeServices;
+    private final RedisConnectionFactory connectionFactory;
 
     @Override
     public void configure(
@@ -57,14 +62,17 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
         endpoints.authenticationManager(authenticationManager)
                 .accessTokenConverter(jwtAccessTokenConverter())
+                .tokenStore(tokenStore())
                 .tokenEnhancer(tokenEnhancerChain)
                 .userDetailsService(customUserDetailsServiceImpl)
+                .authorizationCodeServices(customAuthorizationCodeServices)
                 .reuseRefreshTokens(false);
     }
 
     @Bean
-    public JwtTokenStore jwtTokenStore() {
-        return new JwtTokenStore(jwtAccessTokenConverter());
+    public TokenStore tokenStore() {
+//        return new JwtTokenStore(jwtAccessTokenConverter());
+        return new RedisTokenStore(connectionFactory);
     }
 
     @Bean
@@ -84,7 +92,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     public DefaultTokenServices tokenServices() {
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setSupportRefreshToken(true);
-        defaultTokenServices.setTokenStore(jwtTokenStore());
+        defaultTokenServices.setTokenStore(tokenStore());
         defaultTokenServices.setTokenEnhancer(tokenEnhancer());
         return defaultTokenServices;
     }
